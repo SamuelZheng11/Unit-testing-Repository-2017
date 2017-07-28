@@ -1,0 +1,136 @@
+<p><em>The main goal of this assignment is to demonstrate
+    your understanding of how to develop good quality tests.
+</em></p>
+<p>&nbsp;</p>
+<table border="">
+<tbody>
+<tr>
+<th align="left">Due</th>
+<td>1700hr Friday 11 August</td>
+</tr>
+<tr>
+<th align="left">Worth</th>
+<td>5%</td>
+</tr>
+<tr>
+<th align="left">Submission</th>
+<td><a href="https://adb.auckland.ac.nz">ADB</a> The file <code>TestInheritanceModel.java</code></td>
+</tr>
+</tbody>
+</table>
+
+<h3>Resources</h3>
+<p>On the course website you will find a file <a >softeng254-a01.tar</a>. This contains everything you need. Unpack it at an appropriate place.</p>
+<p>In the files for this assignment, you will find:</p>
+<dl>
+<dt>a01.html</dt>
+<dd>This is a version of the assignment handout (Provided for your off-line convenience). The Canvas version is the authoritative version.</dd>
+<dt>11 jar files</dt>
+<dd>Each jar file contains an implementation of the class <code>softeng.a01.InheritanceModel</code>. In some of them (those with names like badA.jar, badB.jar, and so on) the implementation of this class is known to contain a fault. One (good.jar) is <em>believed</em> to contain no faults.</dd>
+<dt><code>TestInheritanceModel.java</code></dt>
+<dd>A template for the file you are to submit. Do not change the name of the class <b>or the package it is in</b>.</dd>
+<dt><a >InheritanceModel.html</a></dt>
+<dd>This is a Javadoc page describing the expected functionality of the softeng254.a01.InheritanceModel class. You are to base your test suite on what is described in this file (but see the notes below).
+  <p>There is no JavaDoc for <code>softend254.a01.ModelException</code> because all it has is a constructor that takes a String, which is the message for the
+    exception.
+</dd>
+</dl>
+<p>You may also find the following useful:
+  <dl>
+    <dt><a href="http://junit.org">junit.org</a></dt>
+    <dd>The Official JUnit website</dd>
+    <dt><a href="">JUnit JavaDocs</a>
+    <dt><a href="">JUnit tutorial</a>
+    </dl>
+
+<h3>Requirements</h3>
+
+<p>For this assignment, you are to create tests to determine whether code
+written by someone else is correct. You will be given a number of jar files,
+all of which claim to provide a class for representing a model of
+inheritance in Java. What a "model of inheritance in Java" means, and what
+the specific functionality you have to test for is, is described in the
+provided JavaDoc.
+
+<p>In fact, each implementation except one is known to have at least one
+fault. You have to create a set of tests (a <em>test suite</em>) using the
+JUnit framework that will detect at least one fault in all of the different
+implementations.</p>
+
+<p>All (deliberate) faults are due to the implementation not meeting the
+  stated requirements, that is, they are detectable by basing tests only on
+  what you see in the JavaDoc description.
+
+<p>You must use <a href="http://junit.org/junit4/">JUnit 4</a> for your
+  tests. Unfortunately different versions JUnit 4 provide slightly different
+  functionality. In order to ensure your submission can be used by the
+  automatic marking system (see below) you should use 4.12. Using an earlier
+  version should be acceptable.
+
+<p>JUnit 4 provides many annotations, most of which you should avoid.  The
+  nature of this assignment is that you will not get much benefit from them,
+  and the time spent on figuring out how to use them properly would be
+  better spent on the assignment itself.
+
+  <p>The one annotation you cannot
+    avoid, <a href="http://junit.org/junit4/javadoc/latest/org/junit/Test.html"><code>@Test</code></a>,
+    can take two parameters. One of these, timeout, will possibly be useful
+    as it limits the time a test takes (e.g. in case of infinite loops).
+    The other, expected (exception) <font color=red>may not be used</font>.
+    I want you to demonstrate your understanding of the use of
+    <code>try/catch</code> to test exceptions.
+
+  <p>You will see in the jar files that there are more <code>.class</code>
+    files than just the one for <code>InheritanceModel.class</code>. You do not
+    need to test these.
+
+<h3>Assessment</h3>
+
+<p>This assignment worth 5% of your overall grade for SOFTENG254.  Marks
+will be allocated according to how well you demonstrate how well you
+understand how to develop good quality tests.
+
+<p>Primarily your understanding will be determined by how many of the implementations provided you correctly detect faults in (not, "how many faults"), and how well you explain what you are testing.</p>
+
+<p>Your tests will be partially assessed by an automatic marking system. If the automatic marking system either cannot mark your submission, or marks it incorrectly due to your submission not meeting the requirements, then you will likely get zero for the assignment. (Think of it as you have been assigned to write a class that fits into another system. Your boss is unlikely to be impressed if you write a class that doesn't fit.) Note that if your class cannot be compiled, then the automatic marking system will not be able to mark it.</p>
+
+<p>The assignment is marked out of 20 as follows:</p>
+<ul>
+<li>You will get 2 marks if all your tests pass on the "correct" implementation, or if all failed tests indicate an actual fault in the "correct" implementation.</li>
+<li>You will get 0.5 marks for every implementation supplied to you if your test suite indicates that that implementation has a fault. This means that one of your tests must demonstrate that the implementation does the wrong thing. It is <strong>not</strong> sufficient that JUnit indicates that the test has failed --- the test must fail <em>and</em> the failure is clearly due to the implementation containing a fault. (5 marks total)</li>
+<li>Your tests will be run against another set of implementations that contain faults. You will get 2 marks for each implementation your test suite correctly indicates contains a fault. (10 marks total)</li>
+<li>You will get 3 marks for how well you document your tests. (See "Explaining the test case" below).</li>
+</ul>
+<p>In addition, you could be <strong>penalised</strong> as follows:</p>
+<ol>
+<li>50% of your mark out of 20 (as described above) if your tests execute an assert<em>X</em>, fail, or similar method more than <strong>200</strong> times. This is a fairly generous limit, that is, it is much bigger than what you should need. If you feel you need more, discuss it with me. Note that it is not how many times these methods appear in your tests, but how many times they are executed 
+(e.g if you put them in a loop).</li>
+<li>25% of your mark out of 20 (as described above) if your test code quality is poor (See "Test Code Quality" below).</li>
+</ol>
+
+Note also that using any external means (e.g. a tool) to develop your tests is unacceptable. The goal of this assignment is not to come up with the tests, but to demonstrate that you understand how to come up with good quality tests. Use of external means will not convince me of your understanding.
+
+<h4>Explaining the test case</h4>
+<p>It is a common situation that someone (usually you) looking at your code at some point in the future thinks "I wonder if there is a test for this weird case?" In order to help answer this kind of question, it is worth documenting your test cases. It doesn't have to be super elaborate &mdash; just a sentence or so that would help someone reading your tests figure out what <em>general</em> case you are trying to test. Put such documentation in JavaDoc comments for your test case methods. Documentation that makes no attempt to explain <em>why</em> it is worth testing what you're testing or no documentation at all are examples that are likely to lose marks. An example of poor documentation is: "Tests the case for two classes related by inheritance". This says <em>what</em> the test is, but not <em>why</em> this test is of good quality. You need to give some idea as to why you think this particular input will improve the quality of your test suite.</p>
+<h4>Test Code Quality</h4>
+<p>You should give some thought to how you organise your tests. You might even consider developing auxiliary methods to make the test methods easier to write. As well as documenting your individual methods, it is often helpful to group them according to some more general scheme to help keep track of what is being tested where. Lack of any organisation, poor test code, and code that contains debugging print statements are all examples that are likely to lose marks.</p>
+
+<h3>Due dates and Penalties</h3>
+<p>The due date for this assignment is as stated at the top of this page. Late assignments will not be accepted without appropriate documentation (that is, documentation provided by me in advance of the due date). Only submissions made to ADB will be marked under any circumstances.</p>
+
+<h3>Submission</h3>
+
+<p>You are to submit a single file named <code>TestInheritanceModel.java</code> implementing the class <code>softeng254.a01.TestInheritanceModel</code> to the <a href="http://adb.auckland.ac.nz">Assignment Dropbox</a>.  
+You may submit multiple times with only the most recent submission counting. 
+You should use the provided template as your starting point and you should not change the name of the class (remember that the name of the class includes the package it is in).
+<strong>Failure to follow these requirements will result in a mark of zero.</strong> (Inability to follow instructions is an indication of poor quality work, and thus inappropriate for a course on Quality Assurance.)</p>
+
+<p>
+
+<h3>Notes</h3>
+<ol>
+<li>The description given in the JavaDoc page is may not be complete (or even  consistent). It is fairly representative* of what the original software developer would have to work with, but that developer would also have to figure out all the weird cases that haven't been mentioned. As the tester, you have to do the same. If you are unsure about some case, <strong>ask</strong>.
+<p>*<small>I lie. It is <em>much</em> better than most you are likely to encounter.</small></p>
+</li>
+<li>There may be small inconsistencies between what the JavaDoc says should happen and what actually happens (especially for good.jar). <em>You should not assume these are "faults" in the usual sense.</em> The problem may be with the JavaDoc. Again, <strong>ask</strong>.</li>
+</ol>
