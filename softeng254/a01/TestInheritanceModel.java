@@ -50,6 +50,17 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 		}
 		    
     }
+	
+	@Test
+	public void testModuleIsEmptyNull(){
+		try{
+			_model.addModule("", "Interface");
+			_model.addModule(null, "class");
+			fail();	
+		}catch(Exception e){
+			//do nothing
+		}
+	}
 
 	@Test
 	public void testNonExistingParentModuleRelationship(){
@@ -100,20 +111,43 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 	}
 	
 	@Test
-	public void testValidDescendantAncestorRelationship(){
-		boolean result1 = false;
-		boolean result2 = false;
+	public void testValidAncestorRelationship(){
+		boolean result = false;
 		try{
 			_model.addParent("ChildClass1", "MasterClass");
 			_model.addParent("ChildClass2", "ChildClass1");
-			result1 = _model.isAncestor("MasterClass", "ChildClass2");
-			result2 = _model.isDescendant("ChildClass2", "MasterClass");
+			result = _model.isAncestor("MasterClass", "ChildClass2");
 		}catch(Exception e){
 			fail();
 		}	
 
-		assertTrue(result1);
-		assertTrue(result2);	
+		assertTrue(result);	
 	}
 
+	@Test
+	public void testValidDescendantRelationship(){
+		boolean result = false;
+		try{
+			_model.addParent("ChildClass1", "MasterClass");
+			_model.addParent("ChildClass2", "ChildClass1");
+			result = _model.isDescendant("ChildClass2", "MasterClass");
+		}catch(Exception e){
+			fail();
+		}	
+
+		assertTrue(result);
+	}
+	
+	@Test
+	public void testNonExistingAncestorOrDescendantRelationship(){
+		boolean result1 = false;
+		boolean result2 = false;
+		try{
+			result1 = _model.isAncestor("MasterClass", "DoesNotExist");
+			result2 = _model.isDescendant("DoesNotExist", "MasterClass");
+			fail();
+		}catch(Exception e){
+			//do nothing
+		}
+	}
 }
