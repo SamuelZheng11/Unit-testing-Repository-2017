@@ -29,7 +29,7 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 		_model.addModule("ChildClass1", "class");	
 		_model.addModule("ChildClass2", "class");	
 		_model.addModule("ChildClass3", "class");	
-		_model.addModule("ChildClass4", "class");	
+		//_model.addModule("ChildClass4", "class");	
 		_model.addModule("ChildInterface", "interface");
     }	
 	
