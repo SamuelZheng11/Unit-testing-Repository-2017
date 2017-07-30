@@ -99,7 +99,7 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 	}
 
 	@Test
-	public void testValidParentChildRelationShip(){
+	public void testMultipleValidParentChildRelationShip(){
 		try{
 			//should pass test successfully, because this is a simple adding parent to subclass
 			_model.addParent("ChildClass1", "MasterClass");
@@ -107,6 +107,16 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 			_model.addParent("ChildInterface", "MasterInterface");
 		}catch(Exception e){
 			fail();		
+		}
+	}
+
+	@Test
+	public void testNullChild(){
+		try{
+			_model.addParent(null, "MasterClass");			
+			fail();
+		}catch(Exception e){
+			//do nothing	
 		}
 	}
 
@@ -119,6 +129,17 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 		}catch(Exception e){
 			//do nothing
 		}
+	}
+
+	@Test
+	public void testCircularParentChildRelationship(){
+		try{
+			_model.addParent("ChildClass1", "MasterClass");
+			_model.addParent("MasterClass", "ChildClass1");
+			fail();
+		}catch(Exception e){
+			//do nothing
+		}	
 	}
 
 
@@ -151,7 +172,6 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 		}
 		assertEquals(actualChildren, expectedChildren);
 	}
-
 	
 	@Test
 	public void testValidAncestorRelationship(){
@@ -189,6 +209,18 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 		try{
 			result1 = _model.isAncestor("MasterClass", "DoesNotExist");
 			result2 = _model.isDescendant("DoesNotExist", "MasterClass");
+			fail();
+		}catch(Exception e){
+			//do nothing
+		}
+	}
+
+	@Test
+	public void testCircularAncestorDescendantRelationship(){
+		try{
+			_model.addParent("ChildClass1", "MasterClass");
+			_model.addParent("ChildClass2", "ChildClass1");
+			_model.addParent("MasterClass", "ChildClass2");
 			fail();
 		}catch(Exception e){
 			//do nothing
