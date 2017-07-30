@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import softeng254.a01.InheritanceModel;
 import org.junit.Before;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * SOFTENG 254 2017 Assignment 1 submission
@@ -38,6 +40,15 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 		assertTrue(_model.containsModule("MasterInterface"));
 	}	
     
+	@Test
+	public void testAddInvalidKind(){
+		try{
+			_model.addModule("DummyClass", "InvalidKind");
+			fail();	
+		}catch(Exception e){
+			//do nothing
+		}
+	}
 
     @Test
     public void testDuplicateModule(){
@@ -109,6 +120,38 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 			//do nothing
 		}
 	}
+
+
+	@Test
+	public void testGetCorrectSetOfParents(){
+		Set<String> actualParents = new HashSet<String>();
+		Set<String> expectedParents = new HashSet<String>() {{add("MasterClass"); add("MasterInterface");}};
+		try{
+			_model.addParent("ChildClass1", "MasterClass");
+			_model.addParent("ChildClass1", "MasterInterface");
+			actualParents = _model.getParents("ChildClass1");
+		}catch(Exception e){
+			fail();
+		}
+		assertEquals(actualParents, expectedParents);
+	}
+
+
+	@Test
+	public void testGetCorrectSetOfChildren(){
+		Set<String> actualChildren = new HashSet<String>();
+		Set<String> expectedChildren = new HashSet<String>() {{add("ChildClass1"); add("ChildClass2"); add("ChildClass3");}};
+		try{
+			_model.addParent("ChildClass1", "MasterClass");
+			_model.addParent("ChildClass2", "MasterClass");
+			_model.addParent("ChildClass3", "MasterClass");
+			actualChildren = _model.getChildren("MasterClass");
+		}catch(Exception e){
+			fail();
+		}
+		assertEquals(actualChildren, expectedChildren);
+	}
+
 	
 	@Test
 	public void testValidAncestorRelationship(){
@@ -123,6 +166,7 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 
 		assertTrue(result);	
 	}
+
 
 	@Test
 	public void testValidDescendantRelationship(){
