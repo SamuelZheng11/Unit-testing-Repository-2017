@@ -24,13 +24,18 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
         _model = new InheritanceModel();
         _model.addModule("MasterClass", "class");
 		_model.addModule("MasterInterface", "interface");
+		_model.addModule("java.lang.Object" , "class");
 
 		//adding a child modules to use in tests can catch errors later on
 		_model.addModule("ChildClass1", "class");	
 		_model.addModule("ChildClass2", "class");	
-		_model.addModule("ChildClass3", "class");	
-		//_model.addModule("ChildClass4", "class");	
+		_model.addModule("ChildClass3", "class");
+		_model.addModule("ChildClass4", "class");
 		_model.addModule("ChildInterface", "interface");
+		_model.addModule("ChildInterface1", "interface");
+		_model.addModule("ChildInterface2", "interface");
+		_model.addModule("ChildInterface3", "interface");
+		_model.addModule("ChildInterface4", "interface");
     }	
 	
 	@Test
@@ -61,9 +66,15 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 		}
 		    
     }
+
+	@Test
+	public void testIfModelContainsNullOrEmpty(){
+		assertFalse(_model.containsModule(null));	
+		assertFalse(_model.containsModule(null));	
+	}
 	
 	@Test
-	public void testModuleIsEmptyNull(){
+	public void testAddingNullAndEmptyModules(){
 		try{
 			_model.addModule("", "Interface");
 			_model.addModule(null, "class");
@@ -72,6 +83,29 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 			//do nothing
 		}
 	}
+
+
+	@Test
+	public void testAddingJavaLangObjectAsChild(){
+		try{
+			_model.addParent("java.lang.Object", "MasterClass");
+			fail();
+		}catch(Exception e){
+		//do nothing
+		}
+	
+	}
+
+	@Test(timeout=5000)
+	public void testLangObjectInfinateInheritance(){
+		_model.addParent("java.lang.Object", "java.lang.Object");
+		try{
+			_model.getDescendants("java.lang.Object");
+		}catch(Exception e){
+			//do nothing
+		}
+	}
+
 
 	@Test
 	public void testNonExistingParentModuleRelationship(){
@@ -111,13 +145,24 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 	}
 
 	@Test
-	public void testNullChild(){
+	public void parentOfSelf(){
 		try{
-			_model.addParent(null, "MasterClass");			
+			_model.addParent("MasterClass", "MasterClass");
 			fail();
 		}catch(Exception e){
-			//do nothing	
-		}
+			//do nothing
+		}	
+	}
+
+	@Test
+	public void testChildHasMultipleParents(){
+	_model.addParent("ChildClass2", "MasterClass");
+	try{
+		_model.addParent("ChildClass2" , "MasterInterfaceS");
+		fail();
+	}catch(Exception e){
+		//do nothing	
+	}	
 	}
 
 	@Test
@@ -157,6 +202,11 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 		assertEquals(actualParents, expectedParents);
 	}
 
+	@Test
+	public void testMultipleParentInterface(){
+		_model.addParent("ChildClass1", "MasterInterface");
+		_model.addParent("ChildClass1", "ChildInterface");
+	}
 
 	@Test
 	public void testGetCorrectSetOfChildren(){
@@ -172,9 +222,31 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 		}
 		assertEquals(actualChildren, expectedChildren);
 	}
+
+
+	@Test
+	public void testIsAncestorOfSelf(){
+		assertTrue(_model.isAncestor("MasterClass", "MasterClass"));
+	}
+
+	@Test
+	public void testPartialAncestorRelationship(){
+		boolean result = false;
+		try{
+			_model.addParent("ChildClass1", "MasterClass");
+			_model.addParent("ChildClass2", "ChildClass1");
+			_model.addParent("ChildClass3", "ChildClass2");
+			_model.addParent("ChildClass4", "ChildClass3");
+			result = _model.isAncestor("ChildClass1", "ChildClass3");
+		}catch(Exception e){
+			fail();
+		}	
+
+		assertTrue(result);	
+	}
 	
 	@Test
-	public void testValidAncestorRelationship(){
+	public void testGrandAncestorRelationship(){
 		boolean result = false;
 		try{
 			_model.addParent("ChildClass1", "MasterClass");
@@ -187,9 +259,29 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 		assertTrue(result);	
 	}
 
+	@Test
+	public void testIsDescendantOfSelf(){
+		assertTrue(_model.isDescendant("MasterClass", "MasterClass"));
+	}
 
 	@Test
-	public void testValidDescendantRelationship(){
+	public void testPartialDescendantRelationship(){
+		boolean result = false;
+		try{
+			_model.addParent("ChildClass1", "MasterClass");
+			_model.addParent("ChildClass2", "ChildClass1");
+			_model.addParent("ChildClass3", "ChildClass2");
+			_model.addParent("ChildClass4", "ChildClass3");
+			result = _model.isDescendant("ChildClass3", "ChildClass1");
+		}catch(Exception e){
+			fail();
+		}	
+
+		assertTrue(result);	
+	}
+
+	@Test
+	public void testGrandDescendantRelationship(){
 		boolean result = false;
 		try{
 			_model.addParent("ChildClass1", "MasterClass");
@@ -225,5 +317,41 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 		}catch(Exception e){
 			//do nothing
 		}
+	}
+
+	@Test
+	public void testIsCorrectAncestorList(){
+		_model.addParent("ChildClass1", "MasterClass");
+		_model.addParent("ChildClass3", "ChildClass1");
+		_model.addParent("ChildClass2", "MasterClass");
+		Set<String> ActualAncestorList = new HashSet<String>();
+		Set<String> expectedAncestorList = new HashSet<String>() {{add("ChildClass3"); add("ChildClass1"); add("MasterClass");}};
+		ActualAncestorList = _model.getAncestors("ChildClass3");
+		
+		assertEquals(ActualAncestorList, expectedAncestorList);
+	}
+
+	@Test
+	public void testInternalNodeAncestorList(){
+		_model.addParent("ChildClass1", "MasterClass");
+		_model.addParent("ChildClass3", "ChildClass1");
+		_model.addParent("ChildClass2", "MasterClass");
+		Set<String> ActualAncestorList = new HashSet<String>();
+		Set<String> expectedAncestorList = new HashSet<String>() {{add("ChildClass1"); add("MasterClass");}};
+		ActualAncestorList = _model.getAncestors("ChildClass1");
+		
+		assertEquals(ActualAncestorList, expectedAncestorList);
+	}
+
+	@Test
+	public void testInternalNodeDecendantsList(){
+		_model.addParent("ChildClass1", "MasterClass");
+		_model.addParent("ChildClass3", "ChildClass1");
+		_model.addParent("ChildClass2", "MasterClass");
+		Set<String> ActualDescendantsList = new HashSet<String>();
+		Set<String> expectedDescendantsList = new HashSet<String>() {{add("ChildClass1"); add("ChildClass3");}};
+		ActualDescendantsList = _model.getDescendants("ChildClass1");
+		
+		assertEquals(ActualDescendantsList, expectedDescendantsList);
 	}
 }
