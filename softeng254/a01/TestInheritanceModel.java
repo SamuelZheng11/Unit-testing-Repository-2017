@@ -32,10 +32,6 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 		_model.addModule("ChildClass3", "class");
 		_model.addModule("ChildClass4", "class");
 		_model.addModule("ChildInterface", "interface");
-		_model.addModule("ChildInterface1", "interface");
-		_model.addModule("ChildInterface2", "interface");
-		_model.addModule("ChildInterface3", "interface");
-		_model.addModule("ChildInterface4", "interface");
     }	
 	
 	@Test
@@ -74,9 +70,18 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 	}
 	
 	@Test
+	public void testAddingEmptyStringModule(){
+		try{
+			_model.addModule("", "interface");
+			fail();
+		}catch(Exception e){
+			//do nothing
+		}	
+	}
+
+	@Test
 	public void testAddingNullAndEmptyModules(){
 		try{
-			_model.addModule("", "Interface");
 			_model.addModule(null, "class");
 			fail();	
 		}catch(Exception e){
@@ -353,5 +358,45 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 		ActualDescendantsList = _model.getDescendants("ChildClass1");
 		
 		assertEquals(ActualDescendantsList, expectedDescendantsList);
+	}
+
+
+	@Test
+	public void testModuleExistsAfterAddParent(){
+		_model.addParent("ChildClass1","MasterClass");
+		assertTrue(_model.containsModule("ChildClass1"));
+
+	}
+
+	@Test
+	public void testAddParentToInternalModule(){
+		_model.addParent("ChildClass1", "MasterClass");
+		_model.addParent("ChildClass2", "ChildClass1");
+		try{
+			_model.addParent("ChildClass1", "MasterInterface");
+		}catch(Exception e){
+			fail();		
+		}
+
+	}
+
+	@Test
+	public void testModuleWithSameNameDifferentKind(){
+		try{
+			_model.addModule("MasterClass", "interface");
+			fail();
+		}catch(Exception e){
+			//do nothing		
+		}
+	}
+
+	@Test
+	public void testObjectAsParentOfInterface(){
+		try{
+			_model.addParent("MasterInterface", "java.lang.Object");
+			fail();
+		}catch(Exception e){
+			//do nothing		
+		}
 	}
 }
