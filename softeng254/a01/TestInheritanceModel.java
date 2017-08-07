@@ -44,6 +44,7 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 	@Test
 	public void testAddInvalidKind(){
 		try{
+			//testing to see if adding a class of an invalid kind will cause an exception to be thrown
 			_model.addModule("DummyClass", "InvalidKind");
 			fail();	
 		}catch(Exception e){
@@ -52,26 +53,37 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 	}
 
     @Test
-    public void testDuplicateModule(){
+    public void testAddDuplicateClass(){
 		try{
+			//adding module of kind "class" which has already been added in the @before method
 			_model.addModule("MasterClass", "class");
+			fail();		
+		}catch(Exception e){
+			//Do nothing
+		}  
+    }
+
+    @Test
+    public void testAddDuplicateInterface(){
+		try{
+			//adding module of kind "interface" both of which have already been added in the @before method
 			_model.addModule("MasterInterface", "interface");
 			fail();		
 		}catch(Exception e){
 			//Do nothing
-		}
-		    
+		}  
     }
 
 	@Test
 	public void testIfModelContainsNullOrEmpty(){
-		assertFalse(_model.containsModule(null));	
-		assertFalse(_model.containsModule(null));	
+		//testing if _model is null, this should never be true unless specified specifically
+		assertFalse(_model.containsModule(null));
 	}
-	
+
 	@Test
 	public void testAddingEmptyStringModule(){
 		try{
+			//attempting to add a interface that has no name, this should not be allowed
 			_model.addModule("", "interface");
 			fail();
 		}catch(Exception e){
@@ -82,6 +94,7 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 	@Test
 	public void testAddingNullAndEmptyModules(){
 		try{
+			//attempting to add a class that is null, this should not be allowed
 			_model.addModule(null, "class");
 			fail();	
 		}catch(Exception e){
@@ -93,6 +106,7 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 	@Test
 	public void testAddingJavaLangObjectAsChild(){
 		try{
+			//attempting to add java.lang.Object as a child to another class, this should never be allowed
 			_model.addParent("java.lang.Object", "MasterClass");
 			fail();
 		}catch(Exception e){
@@ -102,20 +116,30 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 	}
 
 	@Test(timeout=5000)
-	public void testLangObjectInfinateInheritance(){
+	public void testLangObjectInfinateDescendants(){
+		//setting up a possible infinate loop senario, with java.lang.Object being the parent of itself
 		_model.addParent("java.lang.Object", "java.lang.Object");
 		try{
+		//attempting to get the descendants of java.lang.Objects' when it is the parent of itself
 			_model.getDescendants("java.lang.Object");
 		}catch(Exception e){
 			//do nothing
 		}
 	}
 
+	@Test(timeout=5000)
+	public void testLangObjectInfinateAncestors(){
+		//setting up a possible infinate loop senario, with java.lang.Object being the parent of itself
+		_model.addParent("java.lang.Object", "java.lang.Object");
+		//attempting to get the ancestors of java.lang.Objects' when it is the parent of itself
+		_model.getAncestors("java.lang.Object");
+	}
+
 
 	@Test
 	public void testNonExistingParentModuleRelationship(){
-
 		try{
+			//attempting to add modules that do not exist to a class in the model, this should not be allowed
 			_model.addParent("ChildClass1", "InvalidClass");
 			_model.addParent("ChildClass1", "InvalidInterface");
 			fail();
@@ -126,9 +150,11 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 
 	@Test
 	public void testExistingParentChildRelationship(){
+		//initialising a parent-child relationship for the try/catch statement
 		_model.addParent("ChildClass1", "MasterClass");
 		_model.addParent("ChildClass1", "MasterInterface");
 		try{
+			//attempting to define a relationship that already exists within the model
 			_model.addParent("ChildClass1", "InvalidClass");
 			_model.addParent("ChildClass1", "InvalidInterface");
 			fail();
@@ -140,7 +166,7 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 	@Test
 	public void testMultipleValidParentChildRelationShip(){
 		try{
-			//should pass test successfully, because this is a simple adding parent to subclass
+			//preforming a basic relationship definition, non of which should fail
 			_model.addParent("ChildClass1", "MasterClass");
 			_model.addParent("ChildClass1", "MasterInterface");
 			_model.addParent("ChildInterface", "MasterInterface");
@@ -152,6 +178,7 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 	@Test
 	public void parentOfSelf(){
 		try{
+			//attempting to add a module as the parent of itself, which unless is java.lang.Object should not be allowed
 			_model.addParent("MasterClass", "MasterClass");
 			fail();
 		}catch(Exception e){
@@ -161,9 +188,11 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 
 	@Test
 	public void testChildHasMultipleParents(){
+	//defining a relationship for the try/catch statement
 	_model.addParent("ChildClass2", "MasterClass");
 	try{
-		_model.addParent("ChildClass2" , "MasterInterfaceS");
+		//attempting to add a module as a parent to a child that already has a parent, this should not be allowed
+		_model.addParent("ChildClass2" , "ChildClass1");
 		fail();
 	}catch(Exception e){
 		//do nothing	
@@ -173,6 +202,7 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 	@Test
 	public void testClassIsParentOfInterface(){
 		try{
+			//attempting to add a module of kind "class" as the parent of a module of kind "interface"
 			//should fail as an interface should not be able to inherit from a class
 			_model.addParent("ChildInterface", "MasterClass");
 			fail();
@@ -184,6 +214,8 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 	@Test
 	public void testCircularParentChildRelationship(){
 		try{
+			//attempting to define a circular relationship where, the child is the parent of the parent
+			//and the parent is the child of the child. This should never be allowed
 			_model.addParent("ChildClass1", "MasterClass");
 			_model.addParent("MasterClass", "ChildClass1");
 			fail();
@@ -195,58 +227,76 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 
 	@Test
 	public void testGetCorrectSetOfParents(){
+		//setting up HashSets to use for asserts later on
 		Set<String> actualParents = new HashSet<String>();
 		Set<String> expectedParents = new HashSet<String>() {{add("MasterClass"); add("MasterInterface");}};
 		try{
+			//defining relationships
 			_model.addParent("ChildClass1", "MasterClass");
 			_model.addParent("ChildClass1", "MasterInterface");
+			//saving results to compare with expected results is asserts later
 			actualParents = _model.getParents("ChildClass1");
 		}catch(Exception e){
 			fail();
 		}
+
+		//asserting that the expected results and the actual results are the same for a successful test
 		assertEquals(actualParents, expectedParents);
 	}
 
 	@Test
 	public void testMultipleParentInterface(){
+		//testing that a module can have both an interface and a class as a parent
+		try{
 		_model.addParent("ChildClass1", "MasterInterface");
 		_model.addParent("ChildClass1", "ChildInterface");
+		}catch(Exception e){
+			fail();		
+		}
 	}
 
 	@Test
 	public void testGetCorrectSetOfChildren(){
+		//setting up HashSets to use for asserts later on
 		Set<String> actualChildren = new HashSet<String>();
 		Set<String> expectedChildren = new HashSet<String>() {{add("ChildClass1"); add("ChildClass2"); add("ChildClass3");}};
 		try{
+			//defining relationships
 			_model.addParent("ChildClass1", "MasterClass");
 			_model.addParent("ChildClass2", "MasterClass");
 			_model.addParent("ChildClass3", "MasterClass");
+			//saving results to compare with expected results is asserts later
 			actualChildren = _model.getChildren("MasterClass");
 		}catch(Exception e){
 			fail();
 		}
+		//asserting that the expected results and the actual results are the same for a successful test
 		assertEquals(actualChildren, expectedChildren);
 	}
 
 
 	@Test
 	public void testIsAncestorOfSelf(){
+		//testing that by default a class is the ancestor of itself
 		assertTrue(_model.isAncestor("MasterClass", "MasterClass"));
 	}
 
 	@Test
 	public void testPartialAncestorRelationship(){
+		//definting a failing variable in the assert later
 		boolean result = false;
 		try{
+			//setting up relationship definitions
 			_model.addParent("ChildClass1", "MasterClass");
 			_model.addParent("ChildClass2", "ChildClass1");
 			_model.addParent("ChildClass3", "ChildClass2");
 			_model.addParent("ChildClass4", "ChildClass3");
+			//testing if internal module inheritance is valid
 			result = _model.isAncestor("ChildClass1", "ChildClass3");
 		}catch(Exception e){
 			fail();
 		}	
-
+		//asserting that the intial result has been changed
 		assertTrue(result);	
 	}
 	
@@ -383,6 +433,7 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 	@Test
 	public void testModuleWithSameNameDifferentKind(){
 		try{
+			//testing that an module with the same name as an existing module in the model can be added
 			_model.addModule("MasterClass", "interface");
 			fail();
 		}catch(Exception e){
@@ -391,7 +442,7 @@ public class TestInheritanceModel { // DO NOT CHANGE THE CLASS NAME OR YOU WILL 
 	}
 
 	@Test
-	public void testObjectAsParentOfInterface(){
+	public void testJavaLangObjectAsParentOfInterface(){
 		try{
 			_model.addParent("MasterInterface", "java.lang.Object");
 			fail();
